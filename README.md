@@ -1,8 +1,6 @@
-# Command-Line Help for `dodo`
+# `dodo`: A Minimal todo app.
 
 This document contains the help content for the `dodo` command-line program.
-
-`dodo` is a minimal todo app.
 
 **Command Overview:**
 
@@ -109,8 +107,3 @@ Make a task seem less important
     This document was generated automatically by
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
-
-
- id | stat | task 
-====|======|======>
-
