@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # `dodo`: A minimal to-do app
+=======
+# `dodo`: A Minimal todo app.
+>>>>>>> refs/remotes/origin/main
 
 This document contains the help content for the `dodo` command-line program.
 
@@ -121,4 +125,3 @@ Make a task seem less important
     This document was generated automatically by
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
-
