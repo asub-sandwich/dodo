@@ -1,8 +1,6 @@
-# Command-Line Help for `dodo`
+# `dodo`: A minimal to-do app
 
 This document contains the help content for the `dodo` command-line program.
-
-`dodo` is a minimal todo app.
 
 **Command Overview:**
 
@@ -10,6 +8,7 @@ This document contains the help content for the `dodo` command-line program.
 * [`dodo add`↴](#dodo-add)
 * [`dodo done`↴](#dodo-done)
 * [`dodo urge`↴](#dodo-urge)
+* [`dodo norm`↴](#dodo-norm)
 * [`dodo remove`↴](#dodo-remove)
 * [`dodo up`↴](#dodo-up)
 * [`dodo down`↴](#dodo-down)
@@ -23,6 +22,7 @@ This document contains the help content for the `dodo` command-line program.
 * `add` — Add a task
 * `done` — Mark a task as completed
 * `urge` — Mark a task as urgent
+* `norm` — Mark a task as normal
 * `remove` — Delete an item from the list (with ID)
 * `up` — Make a task seem more important
 * `down` — Make a task seem less important
@@ -58,6 +58,18 @@ Mark a task as completed
 Mark a task as urgent
 
 **Usage:** `dodo urge [ID]...`
+
+###### **Arguments:**
+
+* `<ID>`
+
+
+
+## `dodo norm`
+
+Mark a task as normal
+
+**Usage:** `dodo norm [ID]...`
 
 ###### **Arguments:**
 
@@ -109,8 +121,4 @@ Make a task seem less important
     This document was generated automatically by
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
-
-
- id | stat | task 
-====|======|======>
 

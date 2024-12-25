@@ -29,6 +29,12 @@ pub enum Commands {
         id: Option<Vec<usize>>
     },
 
+    /// Mark a task as normal
+    Norm {
+        #[arg(num_args=1..)]
+        id: Option<Vec<usize>>
+    },
+
     /// Delete an item from the list (with ID)
     Remove {
         #[arg(num_args=1..)]

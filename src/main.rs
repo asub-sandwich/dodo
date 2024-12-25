@@ -57,6 +57,22 @@ fn main() {
                 }
             }
         }
+        Some(Commands::Norm { id }) => {
+            if let Some(ids) = id {
+                for id in ids {
+                    match app.norm(id) {
+                        Ok(t) => {
+                            println!();
+                            println!("Marked as normal:");
+                            println!();
+                            println!("==> {}", t.desc);
+                            app.clone().save().unwrap();
+                        }
+                        Err(e) => app.print_err(id, e),
+                    }
+                }
+            }
+        }
         Some(Commands::Up { id, count}) => {
             if let Some(id) = id {
                 if let Some(count) = count {

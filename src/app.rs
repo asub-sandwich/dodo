@@ -70,6 +70,18 @@ impl App {
         }
     }
 
+    pub fn norm(&mut self, id: usize) -> Result<Task, LoadError> {
+        match self.tasks.get_mut(id) {
+            Some(t) => {
+                t.status = Status::None;
+                return Ok(t.clone());
+            }
+            None => {
+                return Err(LoadError::OutOfBounds)
+            }
+        }
+    }
+
     pub fn move_up(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
 
         let mov = self.tasks.remove(id);
