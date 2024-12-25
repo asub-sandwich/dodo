@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # `dodo`: A minimal to-do app
-=======
-# `dodo`: A Minimal todo app.
->>>>>>> refs/remotes/origin/main
 
 This document contains the help content for the `dodo` command-line program.
 
