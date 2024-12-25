@@ -6,7 +6,7 @@ fn main() {
     let cli = Cli::parse_args();
 
     let mut app = match App::load() {
-        Ok(v) => v, 
+        Ok(v) => v,
         Err(_) => App::default(),
     };
 
@@ -15,7 +15,7 @@ fn main() {
     }
 
     match cli.command {
-        Some(Commands::Add { task}) => {
+        Some(Commands::Add { task }) => {
             if let Some(task_vec) = task {
                 let task = app.add(task_vec);
                 println!();
@@ -73,7 +73,7 @@ fn main() {
                 }
             }
         }
-        Some(Commands::Up { id, count}) => {
+        Some(Commands::Up { id, count }) => {
             if let Some(id) = id {
                 if let Some(count) = count {
                     match app.move_up(id, count) {
@@ -100,7 +100,7 @@ fn main() {
                 }
             }
         }
-        Some(Commands::Down { id, count}) => {
+        Some(Commands::Down { id, count }) => {
             if let Some(id) = id {
                 if let Some(count) = count {
                     match app.move_down(id, count) {
@@ -128,7 +128,6 @@ fn main() {
             }
         }
         Some(Commands::Remove { id }) => {
-            
             if let Some(ids) = id {
                 for id in ids {
                     match app.remove(id) {

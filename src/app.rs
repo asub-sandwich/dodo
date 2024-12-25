@@ -1,11 +1,11 @@
+use crate::*;
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
-use crate::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct App {
-    pub tasks: VecDeque<Task>
+    pub tasks: VecDeque<Task>,
 }
 
 #[derive(Debug, Clone)]
@@ -34,7 +34,6 @@ pub enum SaveError {
 }
 
 impl App {
-
     pub fn add(&mut self, desc_vec: Vec<String>) -> Task {
         let desc = desc_vec.join(" ");
         let task = Task::new(desc);
@@ -50,11 +49,9 @@ impl App {
         match self.tasks.get_mut(id) {
             Some(t) => {
                 t.status = Status::Done;
-                return Ok(t.clone())
+                return Ok(t.clone());
             }
-            None => {
-                return Err(LoadError::OutOfBounds)
-            }
+            None => return Err(LoadError::OutOfBounds),
         }
     }
 
@@ -62,11 +59,9 @@ impl App {
         match self.tasks.get_mut(id) {
             Some(t) => {
                 t.status = Status::Urgent;
-                return Ok(t.clone())
+                return Ok(t.clone());
             }
-            None => {
-                return Err(LoadError::OutOfBounds)
-            }
+            None => return Err(LoadError::OutOfBounds),
         }
     }
 
@@ -76,14 +71,11 @@ impl App {
                 t.status = Status::None;
                 return Ok(t.clone());
             }
-            None => {
-                return Err(LoadError::OutOfBounds)
-            }
+            None => return Err(LoadError::OutOfBounds),
         }
     }
 
     pub fn move_up(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
-
         let mov = self.tasks.remove(id);
 
         if let Some(mov) = mov {
@@ -91,7 +83,7 @@ impl App {
                 true => id - count,
                 false => 0,
             };
-            self.tasks.insert(index , mov.clone());
+            self.tasks.insert(index, mov.clone());
             Ok(mov)
         } else {
             return Err(LoadError::OutOfBounds);
@@ -103,7 +95,7 @@ impl App {
 
         if let Some(mov) = mov {
             if id + count < self.tasks.len() {
-                self.tasks.insert(id+count, mov.clone());
+                self.tasks.insert(id + count, mov.clone());
                 Ok(mov)
             } else {
                 self.tasks.push_back(mov.clone());
@@ -115,12 +107,13 @@ impl App {
     }
 
     fn path() -> std::path::PathBuf {
-        let mut path = if let Some(project_dirs) = 
-            directories_next::ProjectDirs::from("rs", "subora", "fuck") {
-                project_dirs.data_dir().into()
-            } else {
-                std::env::current_dir().unwrap_or_default()
-            };
+        let mut path = if let Some(project_dirs) =
+            directories_next::ProjectDirs::from("rs", "subora", "fuck")
+        {
+            project_dirs.data_dir().into()
+        } else {
+            std::env::current_dir().unwrap_or_default()
+        };
 
         path.push("dodo.json");
         path
@@ -131,8 +124,7 @@ impl App {
 
         let mut contents = String::new();
 
-        let mut file = std::fs::File::open(Self::path())
-            .map_err(|_| LoadError::File)?;
+        let mut file = std::fs::File::open(Self::path()).map_err(|_| LoadError::File)?;
 
         file.read_to_string(&mut contents)
             .map_err(|_| LoadError::File)?;
@@ -143,8 +135,7 @@ impl App {
     pub fn save(self) -> Result<(), SaveError> {
         use std::io::prelude::*;
 
-        let json = serde_json::to_string_pretty(&self)
-            .map_err(|_| SaveError::Format)?;
+        let json = serde_json::to_string_pretty(&self).map_err(|_| SaveError::Format)?;
 
         let path = Self::path();
 
@@ -153,7 +144,8 @@ impl App {
         }
         {
             let mut file = std::fs::File::create(path).map_err(|_| SaveError::File)?;
-            file.write_all(json.as_bytes()).map_err(|_| SaveError::Write)?;
+            file.write_all(json.as_bytes())
+                .map_err(|_| SaveError::Write)?;
             Ok(())
         }
     }

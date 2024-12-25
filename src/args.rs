@@ -12,47 +12,46 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Add a task
-    Add { 
+    Add {
         #[arg(num_args=1..)]
-        task: Option<Vec<String>> 
+        task: Option<Vec<String>>,
     },
 
     /// Mark a task as completed
     Done {
         #[arg(num_args=1..)]
-        id: Option<Vec<usize>>
+        id: Option<Vec<usize>>,
     },
 
     /// Mark a task as urgent
     Urge {
         #[arg(num_args=1..)]
-        id: Option<Vec<usize>>
+        id: Option<Vec<usize>>,
     },
 
     /// Mark a task as normal
     Norm {
         #[arg(num_args=1..)]
-        id: Option<Vec<usize>>
+        id: Option<Vec<usize>>,
     },
 
     /// Delete an item from the list (with ID)
     Remove {
         #[arg(num_args=1..)]
-        id: Option<Vec<usize>>
+        id: Option<Vec<usize>>,
     },
 
     /// Make a task seem more important
     Up {
         id: Option<usize>,
-        count: Option<usize>
+        count: Option<usize>,
     },
 
     /// Make a task seem less important
     Down {
         id: Option<usize>,
         count: Option<usize>,
-    }
-    
+    },
 }
 
 impl Cli {
