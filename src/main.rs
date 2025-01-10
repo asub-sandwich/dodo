@@ -22,35 +22,49 @@ fn main() {
                 println!("Added to dodo: ");
                 println!();
                 println!("==> {}", task.desc);
-                app.clone().save().unwrap();
             }
         }
         Some(Commands::Done { id }) => {
             if let Some(ids) = id {
-                for id in ids {
+                for _ in 0..ids.len() {
+                    let id = ids[0];
                     match app.done(id) {
                         Ok(t) => {
                             println!();
                             println!("Marked as done: ");
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
                 }
             }
         }
-        Some(Commands::Urge { id }) => {
+        Some(Commands::Prog { id }) => {
             if let Some(ids) = id {
                 for id in ids {
+                    match app.prog(id) {
+                        Ok(t) => {
+                            println!();
+                            println!("{}", "Marked as in progress:".yellow());
+                            println!();
+                            println!("==> {}", t.desc);
+                        }
+                        Err(e) => app.print_err(id, e)
+                    }
+                }
+            }
+        }
+        Some(Commands::Urge { id }) => {
+            if let Some(ids) = id {
+                for _ in 0..ids.len() {
+                    let id = ids[0];
                     match app.urge(id) {
                         Ok(t) => {
                             println!();
-                            println!("Marked as urgent:");
+                            println!("{}", "Marked as urgent:".red());
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
@@ -59,14 +73,14 @@ fn main() {
         }
         Some(Commands::Norm { id }) => {
             if let Some(ids) = id {
-                for id in ids {
+                for _ in 0..ids.len() {
+                    let id = ids[0];
                     match app.norm(id) {
                         Ok(t) => {
                             println!();
                             println!("Marked as normal:");
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
@@ -82,7 +96,6 @@ fn main() {
                             println!("Task moved up by {}:", count);
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
@@ -93,7 +106,6 @@ fn main() {
                             println!("Task moved up by 1:");
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
@@ -109,7 +121,6 @@ fn main() {
                             println!("Task moved down by {}:", count);
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
@@ -120,7 +131,6 @@ fn main() {
                             println!("Task moved down by 1:");
                             println!();
                             println!("==> {}", t.desc);
-                            app.clone().save().unwrap();
                         }
                         Err(e) => app.print_err(id, e),
                     }
@@ -129,14 +139,14 @@ fn main() {
         }
         Some(Commands::Remove { id }) => {
             if let Some(ids) = id {
-                for id in ids {
+                for _ in 0..ids.len() {
+                    let id = ids[0];
                     match app.remove(id) {
                         Some(t) => {
                             println!();
-                            println!("{}", "Removed: ".red());
+                            println!("{}", "Removed: ".underline().red());
                             println!();
-                            println!("{}", t.desc);
-                            app.clone().save().unwrap();
+                            println!("==> {}", t.desc);
                         }
                         None => {
                             app.print_err(id, LoadError::OutOfBounds);
@@ -147,6 +157,8 @@ fn main() {
         }
         None => {}
     }
+
+    app.clone().save().unwrap();
 
     for (id, task) in app.tasks.iter_mut().enumerate() {
         task.set_id(id);

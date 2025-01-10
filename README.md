@@ -7,6 +7,7 @@ This document contains the help content for the `dodo` command-line program.
 * [`dodo`↴](#dodo)
 * [`dodo add`↴](#dodo-add)
 * [`dodo done`↴](#dodo-done)
+* [`dodo prog`↴](#dodo-prog)
 * [`dodo urge`↴](#dodo-urge)
 * [`dodo norm`↴](#dodo-norm)
 * [`dodo remove`↴](#dodo-remove)
@@ -21,9 +22,10 @@ This document contains the help content for the `dodo` command-line program.
 
 * `add` — Add a task
 * `done` — Mark a task as completed
+* `done` — Mark a task as in progress
 * `urge` — Mark a task as urgent
 * `norm` — Mark a task as normal
-* `remove` — Delete an item from the list (with ID)
+* `remove` — Delete an item from the list
 * `up` — Make a task seem more important
 * `down` — Make a task seem less important
 
@@ -51,7 +53,15 @@ Mark a task as completed
 
 * `<ID>`
 
+## `dodo prog`
 
+Mark a task as in progress
+
+**Usage:** `dodo prog [ID]...`
+
+##### **Arguments:**
+
+* `<ID>`
 
 ## `dodo urge`
 

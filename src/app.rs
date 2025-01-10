@@ -37,7 +37,13 @@ impl App {
     pub fn add(&mut self, desc_vec: Vec<String>) -> Task {
         let desc = desc_vec.join(" ");
         let task = Task::new(desc);
-        self.tasks.push_back(task.clone());
+        for i in 0..self.tasks.len() {
+            if self.tasks[i].status != Status::Prog 
+            && self.tasks[i].status != Status::Urgent {
+                self.tasks.insert(i, task.clone());
+                break;
+            } 
+        }
         task
     }
 
@@ -49,30 +55,64 @@ impl App {
         match self.tasks.get_mut(id) {
             Some(t) => {
                 t.status = Status::Done;
-                return Ok(t.clone());
             }
             None => return Err(LoadError::OutOfBounds),
         }
+
+        // No need to check id again
+        let task = self.tasks.remove(id).unwrap();
+        self.tasks.push_back(task.clone());
+        return Ok(task);
     }
 
+    pub fn prog(&mut self, id: usize) -> Result<Task, LoadError> {
+        match self.tasks.get_mut(id) {
+            Some(t) => {
+                t.status = Status::Prog;
+            }
+            None => return Err(LoadError::OutOfBounds),
+        }
+
+        let task = self.tasks.remove(id).unwrap();
+        self.tasks.push_front(task.clone());
+        return Ok(task);
+    }
     pub fn urge(&mut self, id: usize) -> Result<Task, LoadError> {
         match self.tasks.get_mut(id) {
             Some(t) => {
                 t.status = Status::Urgent;
-                return Ok(t.clone());
             }
             None => return Err(LoadError::OutOfBounds),
         }
-    }
 
+        let task = self.tasks.remove(id).unwrap();
+        for i in 0..self.tasks.len() {
+            if self.tasks[i].status != Status::Prog {
+                self.tasks.insert(i, task.clone());
+                break;
+            } 
+        }
+        return Ok(task)
+    }
+    
     pub fn norm(&mut self, id: usize) -> Result<Task, LoadError> {
         match self.tasks.get_mut(id) {
             Some(t) => {
                 t.status = Status::None;
-                return Ok(t.clone());
             }
             None => return Err(LoadError::OutOfBounds),
         }
+
+        let task = self.tasks.remove(id).unwrap();
+        for i in 0..self.tasks.len() {
+            if self.tasks[i].status != Status::Prog
+            && self.tasks[i].status != Status::Urgent {
+                self.tasks.insert(i, task.clone());
+                break;
+            }
+        }
+
+        return Ok(task);
     }
 
     pub fn move_up(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {

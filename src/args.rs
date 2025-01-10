@@ -16,37 +16,36 @@ pub enum Commands {
         #[arg(num_args=1..)]
         task: Option<Vec<String>>,
     },
-
+    /// Mark a task as in progress
+    Prog {
+        #[arg(num_args=1..)]
+        id: Option<Vec<usize>>
+    },
     /// Mark a task as completed
     Done {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
-
     /// Mark a task as urgent
     Urge {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
-
     /// Mark a task as normal
     Norm {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
-
-    /// Delete an item from the list (with ID)
+    /// Delete an item from the list
     Remove {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
-
     /// Make a task seem more important
     Up {
         id: Option<usize>,
         count: Option<usize>,
     },
-
     /// Make a task seem less important
     Down {
         id: Option<usize>,

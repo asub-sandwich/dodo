@@ -35,6 +35,9 @@ impl std::fmt::Display for Task {
                 Status::Done => {
                     "done"
                 }
+                Status::Prog => {
+                    "prog"
+                }
                 Status::Urgent => {
                     "urge"
                 }
@@ -47,16 +50,18 @@ impl std::fmt::Display for Task {
             match self.status {
                 Status::None => full.blue(),
                 Status::Done => full.strikethrough().green(),
+                Status::Prog => full.underline().yellow(),
                 Status::Urgent => full.underline().red(),
             }
         )
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq)]
 pub enum Status {
     #[default]
     None,
     Done,
+    Prog,
     Urgent,
 }
