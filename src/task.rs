@@ -1,7 +1,9 @@
+use std::cmp::Ordering;
+
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, PartialOrd, Eq)]
 pub struct Task {
     pub id: usize,
     pub desc: String,
@@ -19,6 +21,13 @@ impl Task {
 
     pub fn set_id(&mut self, id: usize) {
         self.id = id;
+    }
+}
+
+impl Ord for Task {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.id
+            .cmp(&other.id)
     }
 }
 
@@ -57,11 +66,11 @@ impl std::fmt::Display for Task {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Status {
     #[default]
-    None,
-    Done,
-    Prog,
-    Urgent,
+    None = 0,
+    Done = 1,
+    Prog = 2,
+    Urgent = 3,
 }

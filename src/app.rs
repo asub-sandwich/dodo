@@ -36,7 +36,16 @@ pub enum SaveError {
 impl App {
     pub fn add(&mut self, desc_vec: Vec<String>) -> Task {
         let desc = desc_vec.join(" ");
-        let task = Task::new(desc);
+        let mut task = Task::new(desc);
+
+        let id = if self.tasks.is_empty() {
+            0
+        } else {
+            self.tasks.iter().max().unwrap().id + 1
+        };
+
+        task.set_id(id);
+
         for i in 0..self.tasks.len() {
             if self.tasks[i].status != Status::Prog 
             && self.tasks[i].status != Status::Urgent {
@@ -47,102 +56,127 @@ impl App {
         task
     }
 
+    pub fn pos_from_id(&self, id: usize) -> Option<usize> {
+        self.tasks.iter().position(|task| task.id == id)
+    }
+
     pub fn remove(&mut self, id: usize) -> Option<Task> {
-        self.tasks.remove(id)
+        if let Some(index) = self.pos_from_id(id) {
+            self.tasks.remove(index)
+        } else {
+            None
+        }
     }
 
     pub fn done(&mut self, id: usize) -> Result<Task, LoadError> {
-        match self.tasks.get_mut(id) {
-            Some(t) => {
-                t.status = Status::Done;
+        if let Some(index) = self.pos_from_id(id) {
+            match self.tasks.get_mut(index) {
+                Some(t) => {
+                    t.status = Status::Done;
+                }
+                None => return Err(LoadError::OutOfBounds),
             }
-            None => return Err(LoadError::OutOfBounds),
+            let task = self.tasks.remove(index).unwrap();
+            self.tasks.push_back(task.clone());
+            Ok(task)
+        } else {
+            Err(LoadError::OutOfBounds)
         }
-
-        // No need to check id again
-        let task = self.tasks.remove(id).unwrap();
-        self.tasks.push_back(task.clone());
-        return Ok(task);
     }
 
     pub fn prog(&mut self, id: usize) -> Result<Task, LoadError> {
-        match self.tasks.get_mut(id) {
-            Some(t) => {
-                t.status = Status::Prog;
+        if let Some(index) = self.pos_from_id(id) {
+            match self.tasks.get_mut(index) {
+                Some(t) => {
+                    t.status = Status::Prog;
+                }
+                None => return Err(LoadError::OutOfBounds),
             }
-            None => return Err(LoadError::OutOfBounds),
+            let task = self.tasks.remove(index).unwrap();
+            self.tasks.push_front(task.clone());
+            Ok(task)
+        } else {
+            Err(LoadError::OutOfBounds)
         }
-
-        let task = self.tasks.remove(id).unwrap();
-        self.tasks.push_front(task.clone());
-        return Ok(task);
     }
     pub fn urge(&mut self, id: usize) -> Result<Task, LoadError> {
-        match self.tasks.get_mut(id) {
-            Some(t) => {
-                t.status = Status::Urgent;
+        if let Some(index) = self.pos_from_id(id) {
+            match self.tasks.get_mut(index) {
+                Some(t) => {
+                    t.status = Status::Urgent;
+                }
+                None => return Err(LoadError::OutOfBounds),
             }
-            None => return Err(LoadError::OutOfBounds),
+            let task = self.tasks.remove(index).unwrap();
+            for i in 0..self.tasks.len() {
+                if self.tasks[i].status != Status::Prog {
+                    self.tasks.insert(i, task.clone());
+                    break;
+                }
+            }
+            Ok(task)
+        } else {
+            Err(LoadError::OutOfBounds)
         }
-
-        let task = self.tasks.remove(id).unwrap();
-        for i in 0..self.tasks.len() {
-            if self.tasks[i].status != Status::Prog {
-                self.tasks.insert(i, task.clone());
-                break;
-            } 
-        }
-        return Ok(task)
     }
     
     pub fn norm(&mut self, id: usize) -> Result<Task, LoadError> {
-        match self.tasks.get_mut(id) {
-            Some(t) => {
-                t.status = Status::None;
+        if let Some(index) = self.pos_from_id(id) {
+            match self.tasks.get_mut(index) {
+                Some(t) => {
+                    t.status = Status::None;
+                }
+                None => return Err(LoadError::OutOfBounds),
             }
-            None => return Err(LoadError::OutOfBounds),
-        }
 
-        let task = self.tasks.remove(id).unwrap();
-        for i in 0..self.tasks.len() {
-            if self.tasks[i].status != Status::Prog
-            && self.tasks[i].status != Status::Urgent {
-                self.tasks.insert(i, task.clone());
-                break;
+            let task = self.tasks.remove(index).unwrap();
+            for i in 0..self.tasks.len() {
+                if self.tasks[i].status != Status::Prog
+                && self.tasks[i].status != Status::Urgent {
+                    self.tasks.insert(i, task.clone());
+                    break;
+                }
             }
+            Ok(task)
+        } else {
+            Err(LoadError::OutOfBounds)
         }
-
-        return Ok(task);
     }
 
     pub fn move_up(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
-        let mov = self.tasks.remove(id);
-
-        if let Some(mov) = mov {
-            let index = match id as isize - count as isize >= 0 {
-                true => id - count,
-                false => 0,
-            };
-            self.tasks.insert(index, mov.clone());
-            Ok(mov)
+        if let Some(index) = self.pos_from_id(id) {
+            let mov = self.tasks.remove(index);
+            if let Some(mov) = mov {
+                let new_index = match index as isize - count as isize >= 0 {
+                    true => index - count,
+                    false => 0,
+                };
+                self.tasks.insert(new_index, mov.clone());
+                Ok(mov)
+            } else {
+                Err(LoadError::OutOfBounds)
+            }
         } else {
-            return Err(LoadError::OutOfBounds);
+            Err(LoadError::OutOfBounds)
         }
     }
 
     pub fn move_down(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
-        let mov = self.tasks.remove(id);
-
-        if let Some(mov) = mov {
-            if id + count < self.tasks.len() {
-                self.tasks.insert(id + count, mov.clone());
-                Ok(mov)
+        if let Some(index) = self.pos_from_id(id) {
+            let mov = self.tasks.remove(index);
+            if let Some(mov) = mov {
+                if index + count < self.tasks.len() {
+                    self.tasks.insert(index + count, mov.clone());
+                    Ok(mov)
+                } else {
+                    self.tasks.push_back(mov.clone());
+                    Ok(mov)
+                }
             } else {
-                self.tasks.push_back(mov.clone());
-                Ok(mov)
+                Err(LoadError::OutOfBounds)
             }
         } else {
-            Err(LoadError::File)
+            Err(LoadError::OutOfBounds)
         }
     }
 
@@ -192,7 +226,7 @@ impl App {
 
     pub fn print_err(&self, id: usize, e: LoadError) {
         println!();
-        println!("{} {}: Couldn't move up task {}", e, "Error".red(), id);
+        println!("{}{}: task {}", e, "Error".red(), id);
         println!();
     }
 }

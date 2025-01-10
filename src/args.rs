@@ -12,31 +12,37 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Add a task
+    #[command(alias="a")]
     Add {
         #[arg(num_args=1..)]
         task: Option<Vec<String>>,
     },
     /// Mark a task as in progress
+    #[command(alias="ip", alias="p")]
     Prog {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>
     },
     /// Mark a task as completed
+    #[command(alias="d")]
     Done {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
     /// Mark a task as urgent
+    #[command(alias="u")]
     Urge {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
     /// Mark a task as normal
+    #[command(alias="n")]
     Norm {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
     /// Delete an item from the list
+    #[command(alias="rm")]
     Remove {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
@@ -51,6 +57,8 @@ pub enum Commands {
         id: Option<usize>,
         count: Option<usize>,
     },
+    /// Reset task IDs with current positions
+    Reset,
 }
 
 impl Cli {

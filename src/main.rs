@@ -10,9 +10,9 @@ fn main() {
         Err(_) => App::default(),
     };
 
-    for (id, task) in app.tasks.iter_mut().enumerate() {
-        task.set_id(id);
-    }
+    // for (id, task) in app.tasks.iter_mut().enumerate() {
+    //     task.set_id(id);
+    // }
 
     match cli.command {
         Some(Commands::Add { task }) => {
@@ -26,8 +26,7 @@ fn main() {
         }
         Some(Commands::Done { id }) => {
             if let Some(ids) = id {
-                for _ in 0..ids.len() {
-                    let id = ids[0];
+                for id in ids {
                     match app.done(id) {
                         Ok(t) => {
                             println!();
@@ -57,8 +56,7 @@ fn main() {
         }
         Some(Commands::Urge { id }) => {
             if let Some(ids) = id {
-                for _ in 0..ids.len() {
-                    let id = ids[0];
+                for id in ids {
                     match app.urge(id) {
                         Ok(t) => {
                             println!();
@@ -73,8 +71,7 @@ fn main() {
         }
         Some(Commands::Norm { id }) => {
             if let Some(ids) = id {
-                for _ in 0..ids.len() {
-                    let id = ids[0];
+                for id in ids {
                     match app.norm(id) {
                         Ok(t) => {
                             println!();
@@ -139,12 +136,11 @@ fn main() {
         }
         Some(Commands::Remove { id }) => {
             if let Some(ids) = id {
-                for _ in 0..ids.len() {
-                    let id = ids[0];
+                for id in ids {
                     match app.remove(id) {
                         Some(t) => {
                             println!();
-                            println!("{}", "Removed: ".underline().red());
+                            println!("{}", "Removed:".underline().red());
                             println!();
                             println!("==> {}", t.desc);
                         }
@@ -155,14 +151,25 @@ fn main() {
                 }
             }
         }
+        Some(Commands::Reset) => {
+            println!();
+            if !app.tasks.is_empty() {
+                for (index, task) in app.tasks.iter_mut().enumerate() {
+                    task.set_id(index)
+                }
+                println!("{}", "Task ID reset complete...".green());
+            } else {
+                println!("{}", "There are no tasks to reset".red());
+            }
+        }
         None => {}
     }
 
     app.clone().save().unwrap();
 
-    for (id, task) in app.tasks.iter_mut().enumerate() {
-        task.set_id(id);
-    }
+    // for (id, task) in app.tasks.iter_mut().enumerate() {
+    //     task.set_id(id);
+    // }
 
     print_tasks(&app.tasks);
 }
