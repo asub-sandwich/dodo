@@ -237,6 +237,5 @@ impl App {
     pub fn print_err(&self, id: usize, e: LoadError) {
         println!();
         println!("{}{}: task {}", e, "Error".red(), id);
-        println!();
     }
 }
