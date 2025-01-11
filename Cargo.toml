@@ -3,16 +3,17 @@ name = "dodo"
 version = "0.1.0"
 authors = ["Adam Subora <adam.subora@proton.me>"]
 description = "A minimal cli to-do app"
+homepage = "https://github.com/asub-sandwich/dodo"
 repository = "https://github.com/asub-sandwich/dodo"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
 rust-version = "1.74"
-keywords = ["todo", "to-do"]
+keywords = ["cli", "todo", "to-do"]
+categories = ["command-line-interface"]
 
 [dependencies]
 clap = { version = "4.5.26", features = ["derive"] }
-clap-markdown = "0.1.4"
 colored = "3.0.0"
 console = "0.15.10"
 directories-next = "2.0.0"
