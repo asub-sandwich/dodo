@@ -1,133 +1,79 @@
-# `dodo`: A minimal to-do app
-
-This document contains the help content for the `dodo` command-line program.
-
-**Command Overview:**
-
-* [`dodo`↴](#dodo)
-* [`dodo add`↴](#dodo-add)
-* [`dodo done`↴](#dodo-done)
-* [`dodo prog`↴](#dodo-prog)
-* [`dodo urge`↴](#dodo-urge)
-* [`dodo norm`↴](#dodo-norm)
-* [`dodo remove`↴](#dodo-remove)
-* [`dodo up`↴](#dodo-up)
-* [`dodo down`↴](#dodo-down)
-
 ## `dodo`
+
+A minimal cli to-do app
 
 **Usage:** `dodo [COMMAND]`
 
 ###### **Subcommands:**
 
 * `add` — Add a task
-* `done` — Mark a task as completed
-* `done` — Mark a task as in progress
-* `urge` — Mark a task as urgent
-* `norm` — Mark a task as normal
-* `remove` — Delete an item from the list
-* `up` — Make a task seem more important
-* `down` — Make a task seem less important
+* `prog` — Mark task(s) as in progress
+* `done` — Mark task(s)  completed
+* `urge` — Mark task(s) as urgent
+* `norm` — Mark task(s) as normal
+* `remove` — Remove task(s)
+* `reset` — Reset task IDs with current positions
 
+---
 
+### `dodo`
 
-## `dodo add`
+Display task list
+
+**Usage**: `dodo` 
+
+---
+
+### `dodo add`
 
 Add a task
 
-**Usage:** `dodo add [TASK]...`
+**Usage:** `dodo add/a <TASK>`
 
-###### **Arguments:**
+---
 
-* `<TASK>`
-
-
-
-## `dodo done`
-
-Mark a task as completed
-
-**Usage:** `dodo done [ID]...`
-
-###### **Arguments:**
-
-* `<ID>`
-
-## `dodo prog`
+### `dodo prog`
 
 Mark a task as in progress
 
-**Usage:** `dodo prog [ID]...`
+**Usage:** `dodo prog/ip/p [ID]...`
 
-##### **Arguments:**
+---
 
-* `<ID>`
+### `dodo done`
 
-## `dodo urge`
+Mark a task as completed
+
+**Usage:** `dodo done/d [ID]...`
+
+---
+
+### `dodo urge`
 
 Mark a task as urgent
 
-**Usage:** `dodo urge [ID]...`
+**Usage:** `dodo urge/u [ID]...`
 
-###### **Arguments:**
+---
 
-* `<ID>`
-
-
-
-## `dodo norm`
+### `dodo norm`
 
 Mark a task as normal
 
-**Usage:** `dodo norm [ID]...`
+**Usage:** `dodo norm/n [ID]...`
 
-###### **Arguments:**
+---
 
-* `<ID>`
+### `dodo remove`
 
+Delete an item from the list
 
+**Usage:** `dodo remove/rm/r [ID]...` OR `dodo remove/rm/r all`
 
-## `dodo remove`
+---
 
-Delete an item from the list (with ID)
+### `dodo reset`
 
-**Usage:** `dodo remove [ID]...`
+Reset task IDs with current positions
 
-###### **Arguments:**
-
-* `<ID>`
-
-
-
-## `dodo up`
-
-Make a task seem more important
-
-**Usage:** `dodo up [ID] [COUNT]`
-
-###### **Arguments:**
-
-* `<ID>`
-* `<COUNT>`
-
-
-
-## `dodo down`
-
-Make a task seem less important
-
-**Usage:** `dodo down [ID] [COUNT]`
-
-###### **Arguments:**
-
-* `<ID>`
-* `<COUNT>`
-
-
-
-<hr/>
-
-<small><i>
-    This document was generated automatically by
-    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
-</i></small>
+**Usage:** `dodo reset`

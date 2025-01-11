@@ -6,6 +6,12 @@ use std::collections::VecDeque;
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct App {
     pub tasks: VecDeque<Task>,
+    #[serde(skip)]
+    pub num_norm: usize,
+    #[serde(skip)]
+    pub num_top: usize, // Number of tasks marked as urgent and in progress
+    #[serde(skip)]
+    pub num_done: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -38,20 +44,18 @@ impl App {
         let desc = desc_vec.join(" ");
         let mut task = Task::new(desc);
 
-        let id = if self.tasks.is_empty() {
-            0
-        } else {
-            self.tasks.iter().max().unwrap().id + 1
+        // Set task ID
+        let id = match self.tasks.is_empty() {
+            true => 0,
+            false => self.tasks.iter().max().unwrap().id + 1
         };
-
         task.set_id(id);
 
-        for i in 0..self.tasks.len() {
-            if self.tasks[i].status != Status::Prog 
-            && self.tasks[i].status != Status::Urgent {
-                self.tasks.insert(i, task.clone());
-                break;
-            } 
+        match self {
+            x if x.num_top == x.tasks.len() => x.tasks.push_back(task.clone()),
+            x if x.num_done == x.tasks.len() => x.tasks.push_front(task.clone()),
+            x if x.num_done + x.num_top == x.tasks.len() => x.tasks.insert(x.num_top, task.clone()),
+            x => x.tasks.insert(x.num_top + x.num_norm, task.clone())
         }
         task
     }
@@ -108,11 +112,10 @@ impl App {
                 None => return Err(LoadError::OutOfBounds),
             }
             let task = self.tasks.remove(index).unwrap();
-            for i in 0..self.tasks.len() {
-                if self.tasks[i].status != Status::Prog {
-                    self.tasks.insert(i, task.clone());
-                    break;
-                }
+            match self {
+                x if x.num_top == x.tasks.len() => x.tasks.push_back(task.clone()),
+                x if task.status == Status::Urgent || task.status == Status::Prog => x.tasks.insert(x.num_top - 1, task.clone()),
+                x => x.tasks.insert(x.num_top, task.clone())
             }
             Ok(task)
         } else {
@@ -130,12 +133,10 @@ impl App {
             }
 
             let task = self.tasks.remove(index).unwrap();
-            for i in 0..self.tasks.len() {
-                if self.tasks[i].status != Status::Prog
-                && self.tasks[i].status != Status::Urgent {
-                    self.tasks.insert(i, task.clone());
-                    break;
-                }
+            match self {
+                x if x.num_top == x.tasks.len() => x.tasks.push_back(task.clone()),
+                x if x.num_norm == x.tasks.len() => x.tasks.push_front(task.clone()),
+                x => x.tasks.insert(x.num_top, task.clone())
             }
             Ok(task)
         } else {
@@ -143,42 +144,46 @@ impl App {
         }
     }
 
-    pub fn move_up(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
-        if let Some(index) = self.pos_from_id(id) {
-            let mov = self.tasks.remove(index);
-            if let Some(mov) = mov {
-                let new_index = match index as isize - count as isize >= 0 {
-                    true => index - count,
-                    false => 0,
-                };
-                self.tasks.insert(new_index, mov.clone());
-                Ok(mov)
-            } else {
-                Err(LoadError::OutOfBounds)
-            }
-        } else {
-            Err(LoadError::OutOfBounds)
-        }
-    }
+    // I don't like how these work and it fucks up
+    // the status changing process if a task gets
+    // moved out of status order
 
-    pub fn move_down(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
-        if let Some(index) = self.pos_from_id(id) {
-            let mov = self.tasks.remove(index);
-            if let Some(mov) = mov {
-                if index + count < self.tasks.len() {
-                    self.tasks.insert(index + count, mov.clone());
-                    Ok(mov)
-                } else {
-                    self.tasks.push_back(mov.clone());
-                    Ok(mov)
-                }
-            } else {
-                Err(LoadError::OutOfBounds)
-            }
-        } else {
-            Err(LoadError::OutOfBounds)
-        }
-    }
+    // pub fn move_up(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
+    //     if let Some(index) = self.pos_from_id(id) {
+    //         let mov = self.tasks.remove(index);
+    //         if let Some(mov) = mov {
+    //             let new_index = match index as isize - count as isize >= 0 {
+    //                 true => index - count,
+    //                 false => 0,
+    //             };
+    //             self.tasks.insert(new_index, mov.clone());
+    //             Ok(mov)
+    //         } else {
+    //             Err(LoadError::OutOfBounds)
+    //         }
+    //     } else {
+    //         Err(LoadError::OutOfBounds)
+    //     }
+    // }
+    //
+    // pub fn move_down(&mut self, id: usize, count: usize) -> Result<Task, LoadError> {
+    //     if let Some(index) = self.pos_from_id(id) {
+    //         let mov = self.tasks.remove(index);
+    //         if let Some(mov) = mov {
+    //             if index + count < self.tasks.len() {
+    //                 self.tasks.insert(index + count, mov.clone());
+    //                 Ok(mov)
+    //             } else {
+    //                 self.tasks.push_back(mov.clone());
+    //                 Ok(mov)
+    //             }
+    //         } else {
+    //             Err(LoadError::OutOfBounds)
+    //         }
+    //     } else {
+    //         Err(LoadError::OutOfBounds)
+    //     }
+    // }
 
     fn path() -> std::path::PathBuf {
         let mut path = if let Some(project_dirs) =
@@ -210,7 +215,6 @@ impl App {
         use std::io::prelude::*;
 
         let json = serde_json::to_string_pretty(&self).map_err(|_| SaveError::Format)?;
-
         let path = Self::path();
 
         if let Some(dir) = path.parent() {
@@ -222,6 +226,12 @@ impl App {
                 .map_err(|_| SaveError::Write)?;
             Ok(())
         }
+    }
+
+    pub fn update_counts(&mut self) {
+        self.num_norm = self.tasks.iter().filter(|t| t.status == Status::None).count();
+        self.num_done = self.tasks.iter().filter(|t| t.status == Status::Done).count();
+        self.num_top = self.tasks.iter().filter(|t| t.status == Status::Prog || t.status == Status::Urgent).count();
     }
 
     pub fn print_err(&self, id: usize, e: LoadError) {

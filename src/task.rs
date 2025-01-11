@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 
 use colored::Colorize;
+use console::Emoji;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, PartialOrd, Eq)]
@@ -35,20 +36,54 @@ impl std::fmt::Display for Task {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let id_len = (0..).take_while(|i| 10usize.pow(*i) <= self.id).count();
         let id = format!(" {}{} ", self.id, if id_len < 2 { " " } else { "" });
+
+        let done = match unicode_width::UnicodeWidthChar::width('🐸') {
+            None => unreachable!("we checked that there is at least one character"),
+            Some(width) => {
+                match width {
+                    1 => " 🐸🐸 ",
+                    2 => "🐸🐸",
+                    _ => unreachable!("we checked that there is at least one character"),
+                }
+            }
+        };
+
+        let prog = match unicode_width::UnicodeWidthChar::width('🦤') {
+            None => unreachable!("we checked that there is at least one character"),
+            Some(width) => {
+                match width {
+                    1 => " 🦤🦤 ",
+                    2 => "🦤🦤",
+                    _ => unreachable!("we checked that there is at least one character"),
+                }
+            }
+        };
+
+        let urge = match unicode_width::UnicodeWidthChar::width('🚨') {
+            None => unreachable!("we checked that there is at least one character"),
+            Some(width) => {
+                match width {
+                    1 => " 🚨🚨 ",
+                    2 => "🚨🚨",
+                    _ => unreachable!("we checked that there is at least one character"),
+                }
+            }
+        };
+
         let status = format!(
             " {} ",
             match self.status {
                 Status::None => {
-                    "    "
+                    Emoji("    ", "    ")
                 }
                 Status::Done => {
-                    "done"
+                    Emoji(done,"done")
                 }
                 Status::Prog => {
-                    "prog"
+                    Emoji(prog, "prog")
                 }
                 Status::Urgent => {
-                    "urge"
+                    Emoji(urge, "urge")
                 }
             }
         );
@@ -58,7 +93,7 @@ impl std::fmt::Display for Task {
             "{}",
             match self.status {
                 Status::None => full.blue(),
-                Status::Done => full.strikethrough().green(),
+                Status::Done => full.underline().green(),
                 Status::Prog => full.underline().yellow(),
                 Status::Urgent => full.underline().red(),
             }

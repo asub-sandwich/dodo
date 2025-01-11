@@ -42,21 +42,21 @@ pub enum Commands {
         id: Option<Vec<usize>>,
     },
     /// Delete an item from the list
-    #[command(alias="rm")]
+    #[command(alias="rm", alias="r")]
     Remove {
         #[arg(num_args=1..)]
-        id: Option<Vec<usize>>,
+        id: Option<Vec<String>>,
     },
-    /// Make a task seem more important
-    Up {
-        id: Option<usize>,
-        count: Option<usize>,
-    },
-    /// Make a task seem less important
-    Down {
-        id: Option<usize>,
-        count: Option<usize>,
-    },
+    // /// Make a task seem more important
+    // Up {
+    //     id: Option<usize>,
+    //     count: Option<usize>,
+    // },
+    // /// Make a task seem less important
+    // Down {
+    //     id: Option<usize>,
+    //     count: Option<usize>,
+    // },
     /// Reset task IDs with current positions
     Reset,
 }
@@ -64,9 +64,6 @@ pub enum Commands {
 impl Cli {
     pub fn parse_args() -> Self {
         let cli = Cli::parse();
-        if cli.markdown_help {
-            clap_markdown::print_help_markdown::<Cli>();
-        }
         cli
     }
 }
