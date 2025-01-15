@@ -1,11 +1,11 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(author, version, about, long_about=None)]
+#[command(author="Adam Subora", version, about="A minimal cli to-do app", long_about=None)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Commands>,
-    #[arg(long, hide = true)]
+    #[arg(long, hide=true)]
     markdown_help: bool,
 }
 
