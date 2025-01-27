@@ -41,7 +41,7 @@ fn main() {
                             println!("{}", "Marked as in progress:".yellow());
                             println!("==> {}", _t.desc);
                         }
-                        Err(e) => app.print_err(id, e)
+                        Err(e) => app.print_err(id, e),
                     }
                 }
             }
@@ -130,19 +130,28 @@ fn main() {
                 let wild = ids.join("").trim().to_lowercase();
                 if wild == "all" {
                     let mut s = String::new();
-                    print!("{} [Y/n]: ","Are you sure you want to remove all tasks?".red().underline());
+                    print!(
+                        "{} [Y/n]: ",
+                        "Are you sure you want to remove all tasks?"
+                            .red()
+                            .underline()
+                    );
                     let _ = stdout().flush();
                     stdin().read_line(&mut s).expect("Could not read input");
-                    if let Some('\n') = s.chars().next_back() { s.pop(); }
-                    if let Some('\r') = s.chars().next_back() { s.pop(); }
+                    if let Some('\n') = s.chars().next_back() {
+                        s.pop();
+                    }
+                    if let Some('\r') = s.chars().next_back() {
+                        s.pop();
+                    }
                     match s.as_str() {
                         "Y" => {
                             println!("Removing all tasks");
                             app = App::default();
                         }
                         "y" => println!("Must be uppercase! Ignoring `y`..."),
-                        "n" => {},
-                        _ => println!("Ignoring `{}`...", s)
+                        "n" => {}
+                        _ => println!("Ignoring `{}`...", s),
                     }
                 } else {
                     // Parse ourselves because we want to accept `all` as a possible input
@@ -150,15 +159,14 @@ fn main() {
                         let id: usize = match id.parse() {
                             Ok(id) => id,
                             Err(_) => {
-                                println!("{} {}","Invalid ID:".red(), id);
-                                continue
-                            },
+                                println!("{} {}", "Invalid ID:".red(), id);
+                                continue;
+                            }
                         };
                         match app.remove(id) {
                             Some(t) => {
                                 println!();
                                 println!("{}", "Removed:".underline().red());
-                                println!();
                                 println!("==> {}", t.desc);
                             }
                             None => {
@@ -169,6 +177,19 @@ fn main() {
                 }
             }
         }
+        Some(Commands::RemoveDone) => match app.remove_done() {
+            Some(tasks) => {
+                for task in tasks {
+                    println!();
+                    println!("{}", "Removed:".underline().red());
+                    println!("==> {}", task.desc);
+                }
+            }
+            None => {
+                println!();
+                println!("{}", "You do not have any tasks marked as done!".red())
+            }
+        },
         Some(Commands::Reset) => {
             println!();
             if !app.tasks.is_empty() {

@@ -47,7 +47,7 @@ impl App {
         // Set task ID
         let id = match self.tasks.is_empty() {
             true => 0,
-            false => self.tasks.iter().max().unwrap().id + 1
+            false => self.tasks.iter().max().unwrap().id + 1,
         };
         task.set_id(id);
 
@@ -55,7 +55,7 @@ impl App {
             x if x.num_top == x.tasks.len() => x.tasks.push_back(task.clone()),
             x if x.num_done == x.tasks.len() => x.tasks.push_front(task.clone()),
             x if x.num_done + x.num_top == x.tasks.len() => x.tasks.insert(x.num_top, task.clone()),
-            x => x.tasks.insert(x.num_top + x.num_norm, task.clone())
+            x => x.tasks.insert(x.num_top + x.num_norm, task.clone()),
         }
         task
     }
@@ -69,6 +69,28 @@ impl App {
             self.tasks.remove(index)
         } else {
             None
+        }
+    }
+
+    pub fn remove_done(&mut self) -> Option<Vec<Task>> {
+        let done: Vec<Task> = self
+            .tasks
+            .clone()
+            .into_iter()
+            .filter(|t| t.status == Status::Done)
+            .collect();
+        match done.len() == 0 {
+            true => None,
+            false => {
+                let ret = done.clone();
+                for task in done {
+                    let id = task.id;
+                    if let Some(index) = self.pos_from_id(id) {
+                        self.tasks.remove(index);
+                    }
+                }
+                Some(ret)
+            }
         }
     }
 
@@ -114,15 +136,17 @@ impl App {
             let task = self.tasks.remove(index).unwrap();
             match self {
                 x if x.num_top == x.tasks.len() => x.tasks.push_back(task.clone()),
-                x if task.status == Status::Urgent || task.status == Status::Prog => x.tasks.insert(x.num_top - 1, task.clone()),
-                x => x.tasks.insert(x.num_top, task.clone())
+                x if task.status == Status::Urgent || task.status == Status::Prog => {
+                    x.tasks.insert(x.num_top - 1, task.clone())
+                }
+                x => x.tasks.insert(x.num_top, task.clone()),
             }
             Ok(task)
         } else {
             Err(LoadError::OutOfBounds)
         }
     }
-    
+
     pub fn norm(&mut self, id: usize) -> Result<Task, LoadError> {
         if let Some(index) = self.pos_from_id(id) {
             match self.tasks.get_mut(index) {
@@ -136,7 +160,7 @@ impl App {
             match self {
                 x if x.num_top == x.tasks.len() => x.tasks.push_back(task.clone()),
                 x if x.num_norm == x.tasks.len() => x.tasks.push_front(task.clone()),
-                x => x.tasks.insert(x.num_top, task.clone())
+                x => x.tasks.insert(x.num_top, task.clone()),
             }
             Ok(task)
         } else {
@@ -229,9 +253,21 @@ impl App {
     }
 
     pub fn update_counts(&mut self) {
-        self.num_norm = self.tasks.iter().filter(|t| t.status == Status::None).count();
-        self.num_done = self.tasks.iter().filter(|t| t.status == Status::Done).count();
-        self.num_top = self.tasks.iter().filter(|t| t.status == Status::Prog || t.status == Status::Urgent).count();
+        self.num_norm = self
+            .tasks
+            .iter()
+            .filter(|t| t.status == Status::None)
+            .count();
+        self.num_done = self
+            .tasks
+            .iter()
+            .filter(|t| t.status == Status::Done)
+            .count();
+        self.num_top = self
+            .tasks
+            .iter()
+            .filter(|t| t.status == Status::Prog || t.status == Status::Urgent)
+            .count();
     }
 
     pub fn print_err(&self, id: usize, e: LoadError) {

@@ -5,48 +5,51 @@ use clap::{Parser, Subcommand};
 pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Commands>,
-    #[arg(long, hide=true)]
+    #[arg(long, hide = true)]
     markdown_help: bool,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
     /// Add a task
-    #[command(alias="a")]
+    #[command(alias = "a")]
     Add {
         #[arg(num_args=1..)]
         task: Option<Vec<String>>,
     },
     /// Mark a task as in progress
-    #[command(alias="ip", alias="p")]
+    #[command(alias = "ip", alias = "p")]
     Prog {
         #[arg(num_args=1..)]
-        id: Option<Vec<usize>>
+        id: Option<Vec<usize>>,
     },
     /// Mark a task as completed
-    #[command(alias="d")]
+    #[command(alias = "d")]
     Done {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
     /// Mark a task as urgent
-    #[command(alias="u")]
+    #[command(alias = "u")]
     Urge {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
     /// Mark a task as normal
-    #[command(alias="n")]
+    #[command(alias = "n")]
     Norm {
         #[arg(num_args=1..)]
         id: Option<Vec<usize>>,
     },
     /// Delete an item from the list
-    #[command(alias="rm", alias="r")]
+    #[command(alias = "rm", alias = "r")]
     Remove {
         #[arg(num_args=1..)]
         id: Option<Vec<String>>,
     },
+    /// Remove all of the Done tasks
+    #[command(alias = "rd", alias = "cd")]
+    RemoveDone,
     // /// Make a task seem more important
     // Up {
     //     id: Option<usize>,
