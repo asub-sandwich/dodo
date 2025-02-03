@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-
 use colored::Colorize;
 use console::Emoji;
 use serde::{Deserialize, Serialize};
@@ -7,9 +6,21 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, PartialOrd, Eq)]
 pub struct Task {
     pub id: usize,
+    //unique: usize?, // This would be the `relate` field
     pub desc: String,
     pub status: Status,
 }
+
+/*
+
+pub struct Subtask {
+    pub sub_id: usize,
+    pub task_id: usize,
+    pub desc: String,
+    pub status: Status
+}
+
+*/
 
 impl Task {
     pub fn new(desc: String) -> Self {

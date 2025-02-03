@@ -14,6 +14,7 @@ pub struct App {
     pub num_done: usize,
 }
 
+
 #[derive(Debug, Clone)]
 pub enum LoadError {
     File,
